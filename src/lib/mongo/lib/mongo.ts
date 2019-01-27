@@ -153,23 +153,53 @@ export default class Mongo {
 
   public async getClient(name: string) {
     try {
-      logger.debug(`{}Mongo::#getDatabase::initiating execution`);
+      logger.debug(`{}Mongo::#getClient::initiating execution`);
 
       await this.verifyConnection(name);
 
       const database = this.datasources[name].database;
 
-      logger.info(`{}Mongo::#getDatabase::successfully executed`);
+      logger.info(`{}Mongo::#getClient::successfully executed`);
 
       return database;
     } catch (err) {
       const error = new APIError(err);
-      logger.error(`{}Mongo::#getDatabase::error executing::error=${utils.common.stringify(error)}`);
+      logger.error(`{}Mongo::#getClient::error executing::error=${utils.common.stringify(error)}`);
       throw error;
     }
   }
 
   public getConfig(name: string) {
     return this.datasources[name].config;
+  }
+
+  public async shutdown() {
+    try {
+      logger.debug(`{}Mongo::#shutdown::initiating execution`);
+
+      const tasks = Object.keys(this.datasources).map((key: string) => {
+        return (async () => {
+          try {
+            this.datasources[key].db = undefined;
+            await this.datasources[key].client.close();
+            return;
+          } catch (er) {
+            throw er;
+          }
+        })().catch((e: any) => {
+          logger.error(`{}Mongo::#shutdown::error shutting down connection ${key}::error=${utils.common.stringify(new APIError(e))}`);
+        });
+      });
+
+      await Promise.all(tasks);
+
+      logger.info(`{}Mongo::#getClient::successfully executed`);
+
+      return;
+    } catch (err) {
+      const error = new APIError(err);
+      logger.error(`{}Mongo::#getClient::error executing::error=${utils.common.stringify(error)}`);
+      throw error;
+    }
   }
 }

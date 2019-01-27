@@ -7,17 +7,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/src/main.ts",
-      "preLaunchTask": "tsc: build - tsconfig.json",
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Launch main file w/ ts-node",
+      "name": "Launch Server in Typescript",
       "protocol": "inspector",
       "args": ["src/main.ts"],
       "cwd": "${workspaceRoot}",
@@ -26,10 +16,32 @@
       "env": {
         "NODE_ENV": "LOCAL",
         "API_BASE_PATH": "todos-api/v1",
-        "TODOS_DATABASE": "test",
+        "TODOS_DATABASE": "local",
         "MONGO_DB_HOST": "localhost",
         "MONGO_DB_PORT": "27017"
       }
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Jest E2E Tests in Typescript",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/.bin/jest",
+        "--runInBand",
+        "--config",
+        "${workspaceRoot}/test/jest-e2e.json"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "LOCAL",
+        "API_BASE_PATH": "todos-api/v1",
+        "TODOS_DATABASE": "e2eTest",
+        "MONGO_DB_HOST": "localhost",
+        "MONGO_DB_PORT": "27017"
+      }
+    },
   ]
 }

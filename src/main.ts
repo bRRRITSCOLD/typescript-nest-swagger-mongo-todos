@@ -12,6 +12,7 @@ import { loggerMiddleware } from './middleware/logger/logger.middleware';
 
 /* libraries */
 import mongo from './lib/mongo';
+import { APIError } from './models/errors';
 
 async function bootstrap() {
   try {
@@ -40,8 +41,16 @@ async function bootstrap() {
   
     await app.listen(3001);  
   } catch (err) {
-    console.log(err);
-    process.exit(1);
+    const processError = new APIError(err);
+    try {
+      await mongo.shutdown();
+      console.log(processError);
+      process.exit(1);
+    } catch (er) {
+      const errors = [processError, new APIError(er)];
+      console.log(errors);
+      process.exit(1);
+    }
   }
 }
 
