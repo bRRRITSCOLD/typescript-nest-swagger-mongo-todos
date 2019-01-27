@@ -14,6 +14,8 @@ jest.setTimeout(30000)
 describe('TodosController (e2e)', () => {
   let app: INestApplication;
 
+  let createdTodo;
+
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
@@ -32,6 +34,11 @@ describe('TodosController (e2e)', () => {
     );
 
     expect(response.status).toEqual(200);
+    expect(response.body.todos).toBeDefined();
+    expect(response.body.todos.length).toEqual(1);    
+
+    createdTodo = response.body.todos[0];
+
     return;
   });
 
@@ -39,11 +46,95 @@ describe('TodosController (e2e)', () => {
     const response: any = await request(
       app,
       'get',
-      '/todos',
-      { task: 'test task', completed: false }
+      '/todos'
     );
 
     expect(response.status).toEqual(200);
+    expect(response.body.todos.length).toEqual(1);    
+
+    return;
+  });
+
+  it('/todos/:_id (GET)', async () => {
+    const response: any = await request(
+      app,
+      'get',
+      `/todos/${createdTodo._id}`
+    );
+
+    expect(response.status).toEqual(200);
+    expect(response.body.todos.length).toEqual(1);    
+    expect(response.body.todos[0]._id).toEqual(createdTodo._id);    
+
+    createdTodo = response.body.todos[0];
+
+    return;
+  });
+
+  it('/todos/:_id (PUT)', async () => {
+    const response: any = await request(
+      app,
+      'put',
+      `/todos/${createdTodo._id}`,
+      { task: 'replaced todo task', completed: false }
+    );
+
+    expect(response.status).toEqual(200);
+    expect(response.body.todos.length).toEqual(1);    
+    expect(response.body.todos[0]._id).toEqual(createdTodo._id);    
+
+    createdTodo = response.body.todos[0];
+
+    return;
+  });
+
+  it('/todos/:_id (PATCH)', async () => {
+    const response: any = await request(
+      app,
+      'patch',
+      `/todos/${createdTodo._id}`,
+      { task: 'update todo task' }
+    );
+
+    expect(response.status).toEqual(200);
+    expect(response.body.todos.length).toEqual(1);    
+    expect(response.body.todos[0]._id).toEqual(createdTodo._id);    
+
+    createdTodo = response.body.todos[0];
+
+    return;
+  });
+
+  it('/todos/:_id (PATCH)', async () => {
+    const response: any = await request(
+      app,
+      'patch',
+      `/todos/${createdTodo._id}`,
+      { completed: true }
+    );
+
+    createdTodo = response.body.todos[0];
+
+    expect(response.status).toEqual(200);
+    expect(response.body.todos.length).toEqual(1);    
+    expect(response.body.todos[0]._id).toEqual(createdTodo._id);    
+
+    return;
+  });
+
+  it('/todos/:_id (DELETE)', async () => {
+    const response: any = await request(
+      app,
+      'delete',
+      `/todos/${createdTodo._id}`
+    );
+
+    expect(response.status).toEqual(200);
+    expect(response.body.todos.length).toEqual(1);    
+    expect(response.body.todos[0]._id).toEqual(createdTodo._id);    
+
+    createdTodo = response.body.todos[0];
+
     return;
   });
 

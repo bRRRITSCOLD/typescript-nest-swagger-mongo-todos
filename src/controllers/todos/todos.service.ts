@@ -64,7 +64,8 @@ export class TodosService {
   
       logger.info(`{}TodosService::#getOne::successfully executed`);
 
-      return response;
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).end(utils.common.stringify(response));
     } catch (err) {
       const error: APIError = new APIError(err);
       logger.error(`{}TodosService::#getOne::error executing::error=${utils.common.stringify(error)}`);
