@@ -44,3 +44,13 @@ export class Str extends BaseModel {
     Object.assign(this, { value })
   }
 }
+
+export class Bool extends BaseModel {
+  @IsBoolean()
+  public value: boolean;
+
+  constructor(value: boolean) {
+    super();
+    Object.assign(this, { value })
+  }
+}
