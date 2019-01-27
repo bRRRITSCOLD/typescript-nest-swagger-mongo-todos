@@ -11,7 +11,17 @@
     "target": "es6",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "paths": {
+      "controllers/todos": [
+        "libs/controllers/todos/src"
+      ],
+      "controllers/todos/*": [
+        "libs/controllers/todos/src/*"
+      ]
+    }
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -49,18 +49,3 @@ export class APIError {
     if (process.env.NODE_ENV === 'PREP' || process.env.NODE_ENV === 'PROD') this.detail = undefined;
   }
 }
-//   try {
-//     const apiError: IAPIError = {
-//       title: error.message || error.title || 'uncaught exception',
-//       statusCode: error.statusCode || 500,
-//       source: error.source ? APIErrorSource(error.source) : APIErrorSource({}),
-//       detail: error.stack || error.detail
-//     };
-
-//     if (process.env.NODE_ENV === 'PREP' || process.env.NODE_ENV === 'PROD') apiError.detail = undefined;
-
-//     return apiError;
-//   } catch (err) {
-//     throw err;
-//   }
-// }

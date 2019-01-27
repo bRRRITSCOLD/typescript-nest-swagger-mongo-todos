@@ -34,6 +34,7 @@ export function loggerMiddleware(...args: any[]) {
       res.customContext.endTime = endTime;
       req.customContext.endTime = endTime;
 
+      // if (process.env.REQ_RES_LOGGING === 'true') console.lo 
       _end.apply(res, arguments);
     };
 

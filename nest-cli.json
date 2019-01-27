@@ -1,5 +1,11 @@
 {
   "language": "ts",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "projects": {
+    "controllers/todos": {
+      "root": "libs/controllers/todos",
+      "sourceRoot": "libs/controllers/todos/src"
+    }
+  }
 }

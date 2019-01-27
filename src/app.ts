@@ -1,18 +1,9 @@
 import { Module, } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
 
 /* modules */
-import { MatchesModule } from './controllers/matches/matches.module';
+import { TodosModule } from './controllers/todos/todos.module';
 
 @Module({
-  imports: [MatchesModule]
+  imports: [TodosModule]
 })
-class AppModule {}
-
-const app = await NestFactory.create(AppModule);
-
-app.setGlobalPrefix(process.env.API_BASE_PATH)
-
-app.use(helmet());
-
-app.use(loggerMiddleware());
+export class AppModule {}
