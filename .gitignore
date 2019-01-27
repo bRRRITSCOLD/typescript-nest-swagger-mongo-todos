@@ -84,3 +84,7 @@ mongodb/
 
 # dist
 dist/
+
+
+# package-lock
+package-lock.json
