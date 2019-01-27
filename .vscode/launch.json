@@ -25,7 +25,7 @@
       "console": "integratedTerminal",
       "env": {
         "NODE_ENV": "LOCAL",
-        "API_BASE_PATH": "todo-api/v1",
+        "API_BASE_PATH": "todos-api/v1",
         "TODOS_DATABASE": "test",
         "MONGO_DB_HOST": "localhost",
         "MONGO_DB_PORT": "27017"
