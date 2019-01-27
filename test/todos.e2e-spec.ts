@@ -9,7 +9,7 @@ import mongo from '../src/lib/mongo';
 /* utils */
 import { request } from './utils';
 
-jest.setTimeout(30000)
+jest.setTimeout(100000)
 
 describe('TodosController (e2e)', () => {
   let app: INestApplication;
@@ -138,13 +138,13 @@ describe('TodosController (e2e)', () => {
     return;
   });
 
-  afterAll(async () => {
+  afterAll(async (done) => {
     const todosDatabase = await mongo.getDatabase(process.env.TODOS_DATABASE);
 
     await todosDatabase.collection('todos').remove({});
 
     await mongo.shutdown();
 
-    return;
+    return done();
   });
 });

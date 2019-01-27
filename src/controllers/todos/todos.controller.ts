@@ -1,5 +1,5 @@
 /* node_modules */
-import { Controller, Get, Post, Request, Response, Delete, Put, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Request, Response, Delete, Put, Patch, Body, Header, UseFilters, Param } from '@nestjs/common';
 import { ApiResponse, ApiUseTags, ApiProduces, ApiOperation, ApiImplicitBody, ApiImplicitParam } from '@nestjs/swagger';
 
 /* libraries */
@@ -12,6 +12,13 @@ import { Todos, CreateTodo, ReplaceTodo, UpdateTodo } from '../../models/todos';
 
 /* services */
 import { TodosService } from './todos.service';
+
+/* pipes */
+import { CreateTodoPipe, UpdateTodoPipe, ReplaceTodoPipe } from './todos.pipe';
+import { StringPipe } from '../../shared/pipes/base.pipe';
+
+/* filters */
+import { HttpExceptionsFilter } from '../../shared/filters/httpexceptions.filter';
 
 @Controller('todos')
 @ApiUseTags('Todos')
@@ -30,14 +37,16 @@ export class TodosController {
   @ApiResponse({ status: 401, description: 'unauthorized', type: APIError })
   @ApiResponse({ status: 403, description: 'forbidden', type: APIError })
   @ApiResponse({ status: 404, description: 'invalid input, not found, etc', type: APIError })
+  @UseFilters(HttpExceptionsFilter)
   async getAll(@Request() req: any, @Response() res: any): Promise<Todos> {
     try {
-      return await this.todosService.getAll(req, res);
+      const todos: any = await this.todosService.getAll();
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).end(utils.common.stringify(todos));
     } catch (err) {
       const error: APIError = new APIError(err);
       logger.error(`{}TodosController::#getAll::error executing::error=${utils.common.stringify(error)}`);
-      res.setHeader('Content-Type', 'application/json');    
-      return res.status(error.statusCode).end(utils.common.stringify(error));
+      throw error;
     }
   }
 
@@ -54,14 +63,16 @@ export class TodosController {
   @ApiResponse({ status: 401, description: 'unauthorized', type: APIError })
   @ApiResponse({ status: 403, description: 'forbidden', type: APIError })
   @ApiResponse({ status: 404, description: 'invalid input, not found, etc', type: APIError })
-  async getOne(@Request() req: any, @Response() res: any): Promise<Todos> {
+  @UseFilters(HttpExceptionsFilter)
+  async getOne(@Param('_id', new StringPipe()) _id: string, @Request() req: any, @Response() res: any): Promise<Todos> {
     try {
-      return await this.todosService.getOne(req, res);
+      const todos: any = await this.todosService.getOne(_id);
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).end(utils.common.stringify(todos));
     } catch (err) {
       const error: APIError = new APIError(err);
       logger.error(`{}TodosController::#getOne::error executing::error=${utils.common.stringify(error)}`);
-      res.setHeader('Content-Type', 'application/json');    
-      return res.status(error.statusCode).end(utils.common.stringify(error));
+      throw error;
     }
   }
 
@@ -78,14 +89,16 @@ export class TodosController {
   @ApiResponse({ status: 401, description: 'unauthorized', type: APIError })
   @ApiResponse({ status: 403, description: 'forbidden', type: APIError })
   @ApiResponse({ status: 404, description: 'invalid input, not found, etc', type: APIError })
-  async createOne(@Request() req: any, @Response() res: any): Promise<Todos> {
+  @UseFilters(HttpExceptionsFilter)
+  async createOne(@Body(new CreateTodoPipe()) body, @Request() req: any, @Response() res: any): Promise<Todos> {
     try {
-      return await this.todosService.createOne(req, res);
+      const todos = await this.todosService.createOne(body);
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).end(utils.common.stringify(todos));
     } catch (err) {
       const error: APIError = new APIError(err);
       logger.error(`{}TodosController::#createOne::error executing::error=${utils.common.stringify(error)}`);
-      res.setHeader('Content-Type', 'application/json');    
-      return res.status(error.statusCode).end(utils.common.stringify(error));
+      throw error;
     }
   }
 
@@ -102,14 +115,16 @@ export class TodosController {
   @ApiResponse({ status: 401, description: 'unauthorized', type: APIError })
   @ApiResponse({ status: 403, description: 'forbidden', type: APIError })
   @ApiResponse({ status: 404, description: 'invalid input, not found, etc', type: APIError })
-  async deleteOne(@Request() req: any, @Response() res: any): Promise<Todos> {
+  @UseFilters(HttpExceptionsFilter)
+  async deleteOne(@Param('_id', new StringPipe()) _id: string, @Request() req: any, @Response() res: any): Promise<Todos> {
     try {
-      return await this.todosService.deleteOne(req, res);
+      const todos: any = await this.todosService.deleteOne(_id);
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).end(utils.common.stringify(todos));
     } catch (err) {
       const error: APIError = new APIError(err);
       logger.error(`{}TodosController::#deleteOne::error executing::error=${utils.common.stringify(error)}`);
-      res.setHeader('Content-Type', 'application/json');    
-      return res.status(error.statusCode).end(utils.common.stringify(error));
+      throw error;
     }
   }
 
@@ -127,14 +142,16 @@ export class TodosController {
   @ApiResponse({ status: 401, description: 'unauthorized', type: APIError })
   @ApiResponse({ status: 403, description: 'forbidden', type: APIError })
   @ApiResponse({ status: 404, description: 'invalid input, not found, etc', type: APIError })
-  async replaceOne(@Request() req: any, @Response() res: any): Promise<Todos> {
+  @UseFilters(HttpExceptionsFilter)
+  async replaceOne(@Param('_id', new StringPipe()) _id: string, @Body(new ReplaceTodoPipe()) body, @Request() req: any, @Response() res: any): Promise<Todos> {
     try {
-      return await this.todosService.replaceOne(req, res);
+      const todos: any = await this.todosService.replaceOne(_id, body);
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).end(utils.common.stringify(todos));
     } catch (err) {
       const error: APIError = new APIError(err);
       logger.error(`{}TodosController::#replaceOne::error executing::error=${utils.common.stringify(error)}`);
-      res.setHeader('Content-Type', 'application/json');    
-      return res.status(error.statusCode).end(utils.common.stringify(error));
+      throw error;
     }
   }
 
@@ -152,14 +169,16 @@ export class TodosController {
   @ApiResponse({ status: 401, description: 'unauthorized', type: APIError })
   @ApiResponse({ status: 403, description: 'forbidden', type: APIError })
   @ApiResponse({ status: 404, description: 'invalid input, not found, etc', type: APIError })
-  async updateOne(@Request() req: any, @Response() res: any): Promise<Todos> {
+  @UseFilters(HttpExceptionsFilter)
+  async updateOne(@Param('_id', new StringPipe()) _id: string, @Body(new UpdateTodoPipe()) body, @Response() req, @Response() res: any): Promise<Todos> {
     try {
-      return await this.todosService.updateOne(req, res);
+      const todos: any = await this.todosService.updateOne(_id, body);
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).end(utils.common.stringify(todos));
     } catch (err) {
       const error: APIError = new APIError(err);
       logger.error(`{}TodosController::#updateOne::error executing::error=${utils.common.stringify(error)}`);
-      res.setHeader('Content-Type', 'application/json');    
-      return res.status(error.statusCode).end(utils.common.stringify(error));
+      throw error;
     }
   }
 }
