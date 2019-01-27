@@ -1,5 +1,5 @@
 /* node_modules */
-import { Injectable } from '@nestjs/common';
+import { Injectable, UsePipes } from '@nestjs/common';
 import { ObjectID } from 'bson';
 
 /* libraries */
@@ -11,6 +11,9 @@ import utils from '../../lib/utils';
 import { APIError } from '../../models/errors';
 import { Todos, CreateTodo, ReplaceTodo, UpdateTodo } from '../../models/todos';
 import { Str } from '../../models/base';
+
+/* pipes */
+import { UpdateTodoPipe, CreateTodoPipe } from './todos.pipe';
 
 @Injectable()
 export class TodosService {
@@ -73,13 +76,10 @@ export class TodosService {
     }
   }
 
+  @UsePipes(new CreateTodoPipe())
   public async createOne(req: any, res: any): Promise<Todos> {
     try {
       logger.debug(`{}TodosService::#createOne::initiating execution`);
-
-      const createTodo = new CreateTodo(req.body);
-
-      await createTodo.validate();
 
       const todosDatabase = await mongo.getDatabase(process.env.TODOS_DATABASE);
 
@@ -159,17 +159,12 @@ export class TodosService {
     }
   }
 
+  @UsePipes(new UpdateTodoPipe())
   public async updateOne(req: any, res: any): Promise<Todos> {
     try {
       logger.debug(`{}TodosService::#updateOne::initiating execution`);
 
       const todosDatabase = await mongo.getDatabase(process.env.TODOS_DATABASE);
-
-      const _id = new Str(req.params._id);
-      await _id.validate();
-
-      const updateTodo = new UpdateTodo(req.body);
-      await updateTodo.validate();
 
       const todos = await todosDatabase.collection('todos').findOneAndUpdate({ _id: new ObjectID(_id.value) }, { $set: updateTodo });
 
